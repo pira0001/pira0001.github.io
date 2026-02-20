@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Rooted is a calm local network built for real friendships. We weren't meant to live unrooted. Start building roots where you actually live." />
+  <title>Rooted — Real friendships, locally</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #F3EEE6;
+      --card: #FBF8F3;
+      --text: #1F2A24;
+      --muted: #46544C;
+      --border: #D8D0C6;
+      --accent: #3A5947;
+      --accentText: #FFFFFF;
+      --clay: #8B6B4F;
+      --focus: rgba(58, 89, 71, 0.18);
+      --shadow: 0 12px 40px rgba(25, 28, 26, 0.07);
+      --radius: 20px;
+      --inputBg: #ffffff;
+      --btnShadow: 0 8px 24px rgba(58, 89, 71, 0.20);
+      --grain: rgba(31, 42, 36, 0.06);
+      --stepBg: rgba(58, 89, 71, 0.06);
+      --stepNum: var(--accent);
+      --glow1: rgba(58, 89, 71, 0.08);
+      --glow2: rgba(139, 107, 79, 0.06);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0E1210;
+      --card: #141A17;
+      --text: #E7EEE8;
+      --muted: #9EABA3;
+      --border: rgba(231, 238, 232, 0.10);
+      --accent: #7FAF8F;
+      --accentText: #0B0F0D;
+      --clay: #B48A66;
+      --focus: rgba(127, 175, 143, 0.18);
+      --shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+      --inputBg: #111714;
+      --btnShadow: 0 10px 28px rgba(0, 0, 0, 0.40);
+      --grain: rgba(231, 238, 232, 0.04);
+      --stepBg: rgba(127, 175, 143, 0.07);
+      --stepNum: var(--accent);
+      --glow1: rgba(127, 175, 143, 0.06);
+      --glow2: rgba(180, 138, 102, 0.04);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      [data-theme="auto"] {
+        --bg: #0E1210;
+        --card: #141A17;
+        --text: #E7EEE8;
+        --muted: #9EABA3;
+        --border: rgba(231, 238, 232, 0.10);
+        --accent: #7FAF8F;
+        --accentText: #0B0F0D;
+        --clay: #B48A66;
+        --focus: rgba(127, 175, 143, 0.18);
+        --shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+        --inputBg: #111714;
+        --btnShadow: 0 10px 28px rgba(0, 0, 0, 0.40);
+        --grain: rgba(231, 238, 232, 0.04);
+        --stepBg: rgba(127, 175, 143, 0.07);
+        --stepNum: var(--accent);
+        --glow1: rgba(127, 175, 143, 0.06);
+        --glow2: rgba(180, 138, 102, 0.04);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+    html { scroll-behavior: smooth; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient background glow */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-glow::before {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: var(--glow1);
+      top: -180px;
+      right: -100px;
+      filter: blur(120px);
+    }
+    .bg-glow::after {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: var(--glow2);
+      bottom: -120px;
+      left: -80px;
+      filter: blur(100px);
+    }
+
+    /* Grain texture */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent 0px, transparent 2px, var(--grain) 3px, transparent 5px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 3px, var(--grain) 4px, transparent 7px);
+      opacity: 0.12;
+      filter: blur(0.5px);
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 48px 44px;
+      animation: fadeUp 0.55s ease-out both;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Top accent line */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 32px;
+      right: 32px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.35;
+      border-radius: 0 0 2px 2px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 36px;
+      animation: fadeIn 0.4s ease-out 0.1s both;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #E8913A;
+      box-shadow: 0 0 0 4px rgba(232, 145, 58, 0.18);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(232, 145, 58, 0.18); }
+      50% { box-shadow: 0 0 0 8px transparent; }
+    }
+
+    .status {
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(232, 145, 58, 0.3);
+      color: #C67A2A;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      background: rgba(232, 145, 58, 0.08);
+    }
+
+    .toggle {
+      appearance: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 180ms ease;
+      white-space: nowrap;
+    }
+    .toggle:hover {
+      transform: translateY(-1px);
+      color: var(--text);
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    }
+
+    /* Hero */
+    .hero { animation: fadeUp 0.55s ease-out 0.15s both; }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin-bottom: 20px;
+    }
+    h1 .highlight {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+      max-width: 520px;
+      margin-bottom: 8px;
+    }
+    .subtitle:last-of-type {
+      margin-bottom: 0;
+    }
+    .subtitle strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .ctaRow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 32px 0 0;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: var(--accentText);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 180ms ease;
+      box-shadow: var(--btnShadow);
+      font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+    .btn:active { transform: translateY(0px); opacity: 0.92; }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--accent);
+      border-color: color-mix(in oklab, var(--accent) 30%, transparent);
+      box-shadow: none;
+      font-weight: 500;
+    }
+    .btn.secondary:hover {
+      background: var(--focus);
+      box-shadow: none;
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    /* How it works */
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.015em;
+      scroll-margin-top: 24px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: var(--stepBg);
+      border-radius: 14px;
+      font-size: 15px;
+      color: var(--text);
+      transition: all 200ms ease;
+    }
+    .step:hover {
+      background: color-mix(in oklab, var(--accent) 10%, transparent);
+      transform: translateX(4px);
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: color-mix(in oklab, var(--accent) 14%, transparent);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .step-text {
+      flex: 1;
+    }
+    .step-text span {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .step-text small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Form */
+    .formSection {
+      animation: fadeIn 0.4s ease-out 0.3s both;
+    }
+
+    .formGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    @media (min-width: 480px) {
+      .formGrid { grid-template-columns: 1fr 1fr; }
+      .formGrid .full { grid-column: 1 / -1; }
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: var(--inputBg);
+      color: var(--text);
+      font: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 200ms ease;
+    }
+    .field input::placeholder { color: color-mix(in oklab, var(--muted) 50%, transparent); }
+    .field input:hover {
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    }
+    .field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+
+    .submitRow {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .help {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Error/loading states */
+    .form-error {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(200, 60, 60, 0.08);
+      border: 1px solid rgba(200, 60, 60, 0.2);
+      color: #c83c3c;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    [data-theme="dark"] .form-error { color: #f08080; }
+    [data-theme="dark"] .dot { background: #F0A050; box-shadow: 0 0 0 4px rgba(240, 160, 80, 0.18); }
+    [data-theme="dark"] .status { color: #F0A050; border-color: rgba(240, 160, 80, 0.3); background: rgba(240, 160, 80, 0.08); }
+    @media (prefers-color-scheme: dark) {
+      [data-theme="auto"] .form-error { color: #f08080; }
+      [data-theme="auto"] .dot { background: #F0A050; box-shadow: 0 0 0 4px rgba(240, 160, 80, 0.18); }
+      [data-theme="auto"] .status { color: #F0A050; border-color: rgba(240, 160, 80, 0.3); background: rgba(240, 160, 80, 0.08); }
+    }
+
+    .btn.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .btn.loading .btn-label { visibility: hidden; }
+    .btn.loading::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--accentText);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn[type="submit"] {
+      position: relative;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 44px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer strong { color: var(--text); font-weight: 600; }
+
+    @media (max-width: 520px) {
+      .wrap { padding: 32px 16px 64px; }
+      .card { padding: 32px 22px; }
+      .step { padding: 14px 14px; }
+      .submitRow { flex-direction: column; align-items: stretch; }
+      .submitRow .btn { width: 100%; }
+      .submitRow .help { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="topbar">
+        <div class="topline">
+          <span class="dot"></span>
+          Rooted
+          <span class="status">In development</span>
+        </div>
+        <button class="toggle" type="button" id="themeToggle" aria-label="Toggle theme">Auto</button>
+      </div>
+
+      <div class="hero">
+        <h1>Feel <span class="highlight">unrooted</span> in your city?</h1>
+        <p class="subtitle">
+          Somewhere between endless feeds and bigger cities, we lost something simple — <strong>knowing the people around us</strong>.
+        </p>
+        <p class="subtitle">
+          Rooted is a local space built for real friendships, so you can stop drifting and start building roots where you actually live.
+        </p>
+
+        <div class="ctaRow">
+          <button class="btn" type="button" id="jumpWaitlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span>Join the waitlist</span>
+          </button>
+          <a class="btn secondary" href="#how">How it works</a>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div>
+        <p class="section-label">The process</p>
+        <h2 id="how">How Rooted works</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-num">1</span>
+            <div class="step-text">
+              <span>Choose your area</span>
+              <small>Pick the neighbourhood you call home</small>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num">2</span>
+            <div class="step-text">
+              <span>Add a short profile</span>
+              <small>Who you are, what you're into — keep it real</small>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num">3</span>
+            <div class="step-text">
+              <span>Start small</span>
+              <small>Say hello, then meet for something simple</small>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="formSection" id="waitlist">
+        <p class="section-label">Limited spots</p>
+        <h2>Be part of the first group</h2>
+
+        <form id="waitlistForm" name="waitlist" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="bot-field" data-netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="waitlist" />
+          <p style="display:none;">
+            <label>Don't fill this out: <input name="bot-field" /></label>
+          </p>
+
+          <div class="formGrid">
+            <div class="field">
+              <label for="fname">First name</label>
+              <input id="fname" name="First name" type="text" placeholder="Jane" autocomplete="given-name" required />
+            </div>
+
+            <div class="field">
+              <label for="age">Age</label>
+              <input id="age" name="Age" type="number" min="13" placeholder="25" inputmode="numeric" required />
+            </div>
+
+            <div class="field full">
+              <label for="email">Email</label>
+              <input id="email" name="Email" type="email" placeholder="jane@example.com" autocomplete="email" required />
+            </div>
+
+            <div class="field full">
+              <label for="city">City</label>
+              <input id="city" name="City" type="text" placeholder="Manchester" autocomplete="address-level2" required />
+            </div>
+          </div>
+
+          <div class="submitRow">
+            <button class="btn" type="submit">
+              <span class="btn-label">Join Rooted</span>
+            </button>
+            <span class="help">We'll email you when Rooted launches in your area.</span>
+          </div>
+
+          <div class="form-error" id="formError">Something went wrong. Please try again.</div>
+        </form>
+      </div>
+
+      <footer>
+        <div><strong>Rooted</strong></div>
+        <div style="margin-top:4px;">Built for real-world friendships.</div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Theme toggle -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById("themeToggle");
+      var key = "rooted_theme";
+
+      function label(theme) {
+        if (theme === "dark") return "Dark";
+        if (theme === "light") return "Light";
+        return "Auto";
+      }
+
+      function setTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        btn.textContent = label(theme);
+        if (theme === "auto") localStorage.removeItem(key);
+        else localStorage.setItem(key, theme);
+      }
+
+      setTheme(localStorage.getItem(key) || "auto");
+
+      btn.addEventListener("click", function () {
+        var current = root.getAttribute("data-theme") || "auto";
+        var next = current === "auto" ? "dark" : current === "dark" ? "light" : "auto";
+        setTheme(next);
+      });
+    })();
+  </script>
+
+  <!-- Scroll to waitlist -->
+  <script>
+    document.getElementById("jumpWaitlist").addEventListener("click", function () {
+      document.getElementById("waitlist").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  </script>
+
+  <!-- Form loading state -->
+  <script>
+    (function () {
+      var form = document.getElementById("waitlistForm");
+      var submitBtn = form.querySelector('button[type="submit"]');
+
+      form.addEventListener("submit", function () {
+        submitBtn.classList.add("loading");
+      });
+    })();
+  </script>
+</body>
+</html>
